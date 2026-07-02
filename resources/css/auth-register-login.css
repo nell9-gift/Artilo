@@ -1,0 +1,306 @@
+/* =========================================================
+   auth-register.css
+   Styles pour les pages d'authentification (inscription/login)
+   Toutes les couleurs viennent des variables --c-* injectées
+   dynamiquement depuis $settings (voir layouts/guest.blade.php)
+   ========================================================= */
+
+.auth-wrapper {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #0d0d0d;
+}
+
+.auth-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.auth-bg span {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: bgFade 18s infinite;
+    filter: brightness(1.05) saturate(1.05);
+}
+
+/* ✅ IMAGES DE FOND DYNAMIQUES (via variables CSS) */
+.auth-bg span:nth-child(1) {
+    background-image: var(--auth-bg-1);
+    animation-delay: 0s;
+}
+
+.auth-bg span:nth-child(2) {
+    background-image: var(--auth-bg-2);
+    animation-delay: 6s;
+}
+
+.auth-bg span:nth-child(3) {
+    background-image: var(--auth-bg-3);
+    animation-delay: 12s;
+}
+
+@keyframes bgFade {
+    0%   { opacity: 0; transform: scale(1); }
+    5%   { opacity: 1; }
+    33%  { opacity: 1; transform: scale(1.08); }
+    38%  { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+.auth-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        color-mix(in srgb, var(--c-primary, #7C3AED) 35%, transparent) 0%,
+        color-mix(in srgb, var(--c-primary, #7C3AED) 12%, transparent) 45%,
+        color-mix(in srgb, var(--c-secondary, #D97706) 30%, transparent) 100%
+    );
+}
+
+.auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+    margin: 32px;
+    padding: 40px 38px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid color-mix(in srgb, var(--c-primary, #7C3AED) 30%, transparent);
+    border-radius: 22px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+    color: var(--c-text, #2E1065);
+    font-family: 'Figtree', 'Inter', sans-serif;
+}
+
+.auth-card h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    color: var(--c-text, #2E1065);
+}
+
+.auth-card .subtitle {
+    color: var(--c-muted, #6B5B95);
+    font-size: 14px;
+    margin-bottom: 28px;
+}
+
+.field-group {
+    margin-bottom: 18px;
+}
+
+.field-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text, #2E1065);
+    margin-bottom: 6px;
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrap svg {
+    position: absolute;
+    left: 14px;
+    width: 18px;
+    height: 18px;
+    color: var(--c-muted, #6B5B95);
+    pointer-events: none;
+}
+
+.input-wrap .toggle-password {
+    position: absolute;
+    right: 14px;
+    left: auto;
+    width: 18px;
+    height: 18px;
+    color: var(--c-muted, #6B5B95);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.input-wrap .toggle-password:hover {
+    color: var(--c-primary, #7C3AED);
+}
+
+.field-group input {
+    width: 100%;
+    padding: 13px 14px 13px 42px;
+    background: color-mix(in srgb, var(--c-primary, #7C3AED) 6%, white);
+    border: 1px solid color-mix(in srgb, var(--c-primary, #7C3AED) 25%, transparent);
+    border-radius: 12px;
+    color: var(--c-text, #2E1065);
+    font-size: 14.5px;
+    outline: none;
+    transition: border-color .2s, background .2s;
+}
+
+.field-group input.has-toggle {
+    padding-right: 42px;
+}
+
+.field-group input::placeholder {
+    color: color-mix(in srgb, var(--c-text, #2E1065) 40%, transparent);
+}
+
+.field-group input:focus {
+    border-color: var(--c-primary, #7C3AED);
+    background: color-mix(in srgb, var(--c-primary, #7C3AED) 10%, white);
+}
+
+.field-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: #e0395e;
+}
+
+.password-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 480px) {
+    .password-row { grid-template-columns: 1fr; }
+}
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 18px 0 4px;
+    font-size: 13px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--c-muted, #6B5B95);
+    cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--c-primary, #7C3AED);
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: var(--c-secondary, #D97706);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 22px 0;
+    color: var(--c-muted, #6B5B95);
+    font-size: 12.5px;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: color-mix(in srgb, var(--c-primary, #7C3AED) 25%, transparent);
+}
+
+.divider span {
+    padding: 0 12px;
+}
+
+.btn-google {
+    width: 100%;
+    padding: 13px 18px;
+    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--c-text, #2E1065) 15%, transparent);
+    border-radius: 12px;
+    color: var(--c-text, #2E1065);
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: background .2s, border-color .2s;
+}
+
+.btn-google:hover {
+    background: color-mix(in srgb, var(--c-primary, #7C3AED) 6%, white);
+    border-color: color-mix(in srgb, var(--c-primary, #7C3AED) 30%, transparent);
+}
+
+.btn-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--c-primary, #7C3AED), var(--c-secondary, #D97706));
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--c-primary, #7C3AED) 55%, transparent);
+}
+
+.btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px -8px color-mix(in srgb, var(--c-primary, #7C3AED) 70%, transparent);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+.login-link {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--c-muted, #6B5B95);
+}
+
+.login-link a {
+    color: var(--c-secondary, #D97706);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,279 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f6f4ff;
+    margin: 0;
+    color: #2A2438;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* HERO */
+.hero {
+    background: #2E1065;
+    color: white;
+    padding: 60px 0 50px;
+    text-align: center;
+}
+
+.hero .title {
+    font-size: 32px;
+    margin: 0 0 12px 0;
+    color: white;
+}
+
+.hero .subtitle {
+    font-size: 16px;
+    color: #D8CCF5;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+main {
+    padding: 40px 24px;
+}
+
+.card {
+    background: white;
+    padding: 28px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #2E1065;
+    font-size: 20px;
+}
+
+.card p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.card-desc {
+    color: #777;
+    font-size: 14px;
+    margin-top: -4px;
+    margin-bottom: 18px;
+}
+
+/* TABS */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 10px 4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    color: #2E1065;
+    border-bottom-color: #7C3AED;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* STEPS */
+.steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.steps li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #7C3AED;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.steps h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: #2E1065;
+}
+
+.steps p {
+    margin: 0;
+}
+
+/* PAYMENT GRID */
+.payment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.payment-item {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.payment-item h3 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    color: #2E1065;
+}
+
+.payment-item p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ENGAGEMENTS */
+.engagement-list {
+    margin: 0;
+    padding-left: 20px;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* STATUS */
+.status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #444;
+    font-size: 14px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot.active {
+    background: #22C55E;
+}
+
+.status-dot.pending {
+    background: #F59E0B;
+}
+
+/* FOOTER */
+.footer {
+    background: #1E0A4D;
+    color: #C9BEEA;
+    margin-top: 50px;
+    padding: 50px 0 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 30px;
+    padding-bottom: 40px;
+}
+
+.footer-logo {
+    color: white;
+    font-size: 20px;
+    margin: 0 0 10px 0;
+}
+
+.footer-col h4 {
+    color: white;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.footer-col p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.footer-col a {
+    color: #C9BEEA;
+    text-decoration: none;
+}
+
+.footer-col a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 18px 0;
+    text-align: center;
+    font-size: 13px;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}

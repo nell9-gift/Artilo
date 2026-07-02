@@ -1,0 +1,6 @@
+@import './auth-register-customer.css';
+@import './auth-register-artisan.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,338 @@
+/* =========================================================
+   auth-register-artisan.css
+   Styles pour la page d'inscription des artisans (BTP / menuiserie)
+   ========================================================= */
+
+.auth-wrapper {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #0d0d0d;
+}
+
+/* --- Arrière-plan animé (chantier / menuiserie / BTP) --- */
+.auth-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.auth-bg span {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: bgFade 20s infinite;
+    filter: brightness(1.05) saturate(1.1);
+}
+
+.auth-bg span:nth-child(1) {
+    background-image: url('/images/auth/image_charpenterie.png'); /* atelier menuiserie */
+    animation-delay: 0s;
+}
+
+.auth-bg span:nth-child(2) {
+    background-image: url('/images/auth/image_btp.png'); /* chantier BTP */
+    animation-delay: 6.6s;
+}
+
+.auth-bg span:nth-child(3) {
+    background-image: url('/images/auth/image_electricien.png'); /* outils / établi */
+    animation-delay: 13.2s;
+}
+
+@keyframes bgFade {
+    0%   { opacity: 0; transform: scale(1); }
+    5%   { opacity: 1; }
+    28%  { opacity: 1; transform: scale(1.07); }
+    33%  { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+.auth-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255,210,230,0.12) 0%, rgba(255,210,230,0.04) 45%, rgba(255,210,230,0.18) 100%);
+}
+
+/* --- Bandeau "copeaux de bois" décoratif (signature visuelle) --- */
+.auth-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    z-index: 2;
+    background: repeating-linear-gradient(
+        90deg,
+        #ff9ec7 0px, #ff9ec7 18px,
+        #ff9ec7 18px, #ff9ec7 36px,
+        #ff9ec7 36px, #ff9ec7 54px
+    );
+}
+
+/* --- Carte du formulaire --- */
+.auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    margin: 32px;
+    padding: 40px 38px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 158, 199, 0.4);
+    border-radius: 18px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+    color: #3a2230;
+    font-family: 'Figtree', 'Inter', sans-serif;
+}
+
+.auth-card .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    margin-bottom: 14px;
+    background: rgba(255, 158, 199, 0.18);
+    border: 1px solid rgba(255, 158, 199, 0.5);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #d9447c;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.auth-card h1 {
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    color: #2b1822;
+}
+
+.auth-card .subtitle {
+    color: rgba(58, 34, 48, 0.6);
+    font-size: 14px;
+    margin-bottom: 26px;
+}
+
+.field-group {
+    margin-bottom: 18px;
+}
+
+.field-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(58, 34, 48, 0.85);
+    margin-bottom: 6px;
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrap svg {
+    position: absolute;
+    left: 14px;
+    width: 18px;
+    height: 18px;
+    color: rgba(58, 34, 48, 0.4);
+    pointer-events: none;
+}
+
+.input-wrap .toggle-password {
+    position: absolute;
+    right: 14px;
+    left: auto;
+    width: 18px;
+    height: 18px;
+    color: rgba(58, 34, 48, 0.4);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.input-wrap .toggle-password:hover {
+    color: rgba(58, 34, 48, 0.75);
+}
+
+.field-group input,
+.field-group select {
+    width: 100%;
+    padding: 13px 14px 13px 42px;
+    background: rgba(255, 158, 199, 0.08);
+    border: 1px solid rgba(255, 158, 199, 0.35);
+    border-radius: 10px;
+    color: #2b1822;
+    font-size: 14.5px;
+    outline: none;
+    transition: border-color .2s, background .2s;
+    appearance: none;
+}
+
+.field-group select {
+    cursor: pointer;
+}
+
+/* Les <option> ne suivent pas le style du <select> dans la plupart des
+   navigateurs : on force donc explicitement fond blanc / texte noir
+   pour qu'elles restent lisibles dans la liste déroulante. */
+.field-group select option {
+    background-color: #ffffff !important;
+    color: #1a1410 !important;
+}
+
+/* Flèche custom pour le select profession */
+.input-wrap.select-wrap::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid rgba(58, 34, 48, 0.45);
+    border-bottom: 2px solid rgba(58, 34, 48, 0.45);
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+
+.field-group input.has-toggle {
+    padding-right: 42px;
+}
+
+.field-group input::placeholder {
+    color: rgba(58, 34, 48, 0.35);
+}
+
+.field-group input:focus,
+.field-group select:focus {
+    border-color: #ff9ec7;
+    background: rgba(255, 158, 199, 0.14);
+}
+
+.field-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: #e0395e;
+}
+
+.password-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 480px) {
+    .password-row { grid-template-columns: 1fr; }
+}
+
+/* --- Zone d'upload du document d'identité (drag & drop) --- */
+.upload-zone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    padding: 22px 16px;
+    border: 1.5px dashed rgba(255, 158, 199, 0.6);
+    border-radius: 12px;
+    background: rgba(255, 158, 199, 0.06);
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+}
+
+.upload-zone:hover,
+.upload-zone.is-dragover {
+    border-color: #ff9ec7;
+    background: rgba(255, 158, 199, 0.14);
+}
+
+.upload-zone svg {
+    width: 26px;
+    height: 26px;
+    color: #d9447c;
+}
+
+.upload-zone .upload-text {
+    font-size: 13.5px;
+    color: rgba(58, 34, 48, 0.65);
+}
+
+.upload-zone .upload-text strong {
+    color: #d9447c;
+    font-weight: 600;
+}
+
+.upload-zone .file-name {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: #2b1822;
+    font-weight: 600;
+    word-break: break-all;
+}
+
+.upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.btn-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #ff9ec7, #ff5fa2);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 10px 24px -8px rgba(255, 95, 162, 0.6);
+}
+
+.btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px -8px rgba(255, 95, 162, 0.75);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+.login-link {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 13.5px;
+    color: rgba(58, 34, 48, 0.6);
+}
+
+.login-link a {
+    color: #d9447c;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
