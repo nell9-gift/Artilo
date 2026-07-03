@@ -29,8 +29,34 @@ class AuthenticatedSessionController extends Controller
         // Récupère l'utilisateur actuellement connecté
         $user = Auth::user();
 
-        // Redirige vers le tableau de bord
-        return redirect()->route('dashboard');
+        // Si c'est un admin, direction le panneau admin
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // Si c'est un artisan, on vérifie que son dossier est validé
+        if ($user->role === 'artisan') {
+            $artisan = $user->artisan;
+
+            if ($artisan && $artisan->status === 'pending') {
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->with('status', 'Votre candidature est toujours en cours d\'etude. Vous recevrez un email des qu\'elle sera validee.');
+            }
+
+            if ($artisan && $artisan->status === 'rejected') {
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->with('status', 'Votre candidature n\'a pas ete retenue. Contactez-nous pour plus d\'informations.');
+            }
+        }
+
+        // Sinon (customer, ou artisan validé), direction le tableau de bord
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     // Déconnecte l'utilisateur

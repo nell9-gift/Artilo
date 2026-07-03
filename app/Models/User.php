@@ -48,4 +48,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relation : un utilisateur (artisan) possède un profil Artisan
+    public function artisan()
+    {
+        return $this->hasOne(Artisan::class);
+    }
 }

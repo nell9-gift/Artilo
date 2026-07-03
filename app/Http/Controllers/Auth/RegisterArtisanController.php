@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Artisan;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class RegisterArtisanController extends Controller
 {
@@ -18,10 +16,10 @@ class RegisterArtisanController extends Controller
         return view('auth.register-artisan');
     }
 
-    // Traite les données soumises par le formulaire d'inscription
+    // Traite les donnÃ©es soumises par le formulaire d'inscription
     public function store(Request $request)
     {
-        // Validation des données saisies par l'utilisateur
+        // Validation des donnÃ©es saisies par l'utilisateur
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
@@ -31,8 +29,7 @@ class RegisterArtisanController extends Controller
             'intervention_area' => 'required|string',
             'identity_document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
-
-        // Création du compte utilisateur avec le rôle "artisan"
+        // CrÃ©ation du compte utilisateur avec le rÃ´le "artisan"
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -40,12 +37,10 @@ class RegisterArtisanController extends Controller
             'password' => Hash::make($request->password), // Chiffrement du mot de passe
             'role' => 'artisan',
         ]);
-
-        // Enregistre le document d'identité dans le stockage privé
+        // Enregistre le document d'identitÃ©dans le stockage privÃ©
         $documentPath = $request->file('identity_document')
             ->store('identity_documents', 'private');
-
-        // Crée le profil de l'artisan associé à l'utilisateur
+        // CrÃ©e le profil de l'artisan associÃ© Ã  l'utilisateur
         Artisan::create([
             'user_id' => $user->id,
             'profession' => $request->profession,
@@ -54,11 +49,8 @@ class RegisterArtisanController extends Controller
             'status' => 'pending', // En attente de validation
         ]);
 
-        // Connecte automatiquement l'artisan après son inscription
-        Auth::login($user);
-
-        // Redirige vers le tableau de bord avec un message d'information
-        return redirect()->route('dashboard')
-            ->with('info', 'Your account is being validated by our team.');
+        // Pas de connexion automatique : l'artisan doit attendre la validation admin
+        return redirect()->route('login')
+            ->with('status', 'Votre candidature a bien Ã©tÃ© envoyÃ©e ! Elle est en cours d\'Ã©tude par notre Ã©quipe. Vous recevrez un email dÃ¨s qu\'elle sera validÃ©e.');
     }
 }

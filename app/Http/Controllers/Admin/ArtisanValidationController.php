@@ -1,47 +1,61 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artisan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-// Contrôleur de validation des artisans
 class ArtisanValidationController extends Controller
 {
-    // Afficher les artisans en attente
+    // Affiche la liste des artisans en attente de validation
     public function index()
     {
         $artisans = Artisan::with('user')
-            ->where('statut', 'en_attente')
+            ->where('status', 'pending')   // ← colonne "status" et valeur "pending"
             ->latest()
             ->paginate(20);
 
         return view('admin.artisans.index', compact('artisans'));
     }
 
-    // Valider un artisan
+    // Valider un artisan (le faire passer en "approved")
     public function valider(Artisan $artisan)
     {
-        $artisan->update(['statut' => 'valide']);
+        $artisan->update([
+            'status' => 'approved',   // ← colonne "status" et valeur "approved"
+        ]);
 
-        // Notification à ajouter plus tard
-        return back()->with('success', "Artisan {$artisan->user->name} validé.");
+        // TODO: envoyer un email ou SMS de validation
+
+        return back()->with('success', "Artisan {$artisan->user->name} validé avec succès !");
     }
 
-    // Refuser un artisan
+    // Refuser un artisan (le faire passer en "rejected" avec un motif)
     public function refuser(Request $request, Artisan $artisan)
     {
-        // Vérifier le motif du refus
         $request->validate([
-            'motif_refus' => 'required|string|max:500'
+            'refusal_reason' => 'required|string|max:500',   // ← colonne "refusal_reason"
         ]);
 
-        // Mettre à jour le statut et enregistrer le motif
         $artisan->update([
-            'statut'      => 'refuse',
-            'motif_refus' => $request->motif_refus,
+            'status' => 'rejected',                        // ← colonne "status" et valeur "rejected"
+            'refusal_reason' => $request->refusal_reason,  // ← colonne "refusal_reason"
         ]);
 
-        return back()->with('success', "Artisan refusé.");
+        // TODO: envoyer un email ou SMS de refus
+
+        return back()->with('success', "Artisan {$artisan->user->name} refusé.");
+    }
+
+    // (Optionnel) Afficher le document d'identité d'un artisan
+    public function voirDocument(Artisan $artisan)
+    {
+        if (! Storage::disk('private')->exists($artisan->identity_document)) {
+            abort(404, 'Document introuvable.');
+        }
+
+        return Storage::disk('private')->response($artisan->identity_document);
     }
 }

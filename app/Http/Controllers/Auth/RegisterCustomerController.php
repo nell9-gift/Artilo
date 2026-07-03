@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterCustomerController extends Controller
@@ -36,10 +35,8 @@ class RegisterCustomerController extends Controller
             'role' => 'customer',                      // rôle = client
         ]);
 
-        // Connexion automatique de l'utilisateur après inscription
-        Auth::login($user);
-
-        // Redirection vers le dashboard
-        return redirect()->route('dashboard');
+        // Redirection vers la page de connexion après inscription
+        return redirect()->route('login')
+            ->with('status', 'Votre compte a bien été créé. Connectez-vous pour y accéder.');
     }
 }

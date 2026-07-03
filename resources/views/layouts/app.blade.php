@@ -4,6 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -32,5 +35,20 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <script>
+            window.addEventListener('pageshow', function (event) {
+                var navigationEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+                var isBackForward = event.persisted || (navigationEntries && navigationEntries[0] && navigationEntries[0].type === 'back_forward');
+
+                if (isBackForward) {
+                    window.location.href = window.location.href;
+                }
+            });
+
+            window.addEventListener('unload', function () {
+                // Ajoute un gestionnaire unload pour réduire le risque de cache de page navigateur
+            });
+        </script>
     </body>
 </html>

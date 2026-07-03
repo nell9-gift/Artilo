@@ -16,8 +16,11 @@
             <p class="subtitle">{{ $settings['auth_subtitle'] ?? 'Connectez-vous pour accéder à votre espace' }}</p>
 
             <!-- Statut de session (ex: mot de passe réinitialisé) -->
-            <x-auth-session-status class="mb-4" :status="session('status')" />
-
+           @if (session('status'))
+    <div id="toast" class="toast">
+        {{ session('status') }}
+    </div>
+@endif
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
@@ -110,6 +113,15 @@
                 target.type = target.type === 'password' ? 'text' : 'password';
             });
         });
+        const toast = document.getElementById('toast');
+    if (toast) {
+        setTimeout(() => toast.classList.add('is-visible'), 50);
+        setTimeout(() => {
+            toast.classList.remove('is-visible');
+            setTimeout(() => toast.remove(), 400);
+        }, 5000);
+    }
+
     </script>
 
 </x-guest-layout>

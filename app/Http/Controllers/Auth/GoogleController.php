@@ -28,6 +28,10 @@ class GoogleController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard'); // adapte vers ta route post-login
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('dashboard');
     }
 }

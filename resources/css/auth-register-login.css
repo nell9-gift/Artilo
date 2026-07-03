@@ -304,3 +304,29 @@
 .login-link a:hover {
     text-decoration: underline;
 }
+
+/* --- Toast (notification éphémère) --- */
+.toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translate(-50%, -20px);
+    z-index: 999;
+    max-width: 420px;
+    padding: 14px 20px;
+    background: #1f1f24;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity .35s ease, transform .35s ease;
+    text-align: center;
+}
+
+.toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
