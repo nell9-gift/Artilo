@@ -2,6 +2,8 @@
 
 // Import des contrôleurs et classes nécessaires
 use App\Http\Controllers\Admin\ArtisanValidationController;
+use App\Http\Controllers\Admin\ProfilArtisanController;  // ⬅️ NOUVEAU
+use App\Http\Controllers\Artisan\ProfilController;       // ⬅️ NOUVEAU
 use App\Http\Controllers\Auth\RegisterArtisanController;
 use App\Http\Controllers\Auth\RegisterCustomerController;
 use App\Http\Controllers\ProfileController;
@@ -17,7 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Tableau de bord
+// Tableau de bord (aiguillage selon le rôle)
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
@@ -25,8 +27,27 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
 
+    if ($user?->role === 'artisan') {
+        return redirect()->route('artisan.dashboard');
+    }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Tableau de bord des artisans
+Route::get('/artisan/dashboard', function () {
+    $artisan = Auth::user()->artisan;
+    return view('artisans.dashboard', compact('artisan'));
+})->middleware(['auth', 'verified'])->name('artisan.dashboard');
+
+// ======================================================
+// ROUTES ARTISAN (espace protégé)  ⬅️ NOUVEAU BLOC
+// ======================================================
+Route::middleware(['auth'])->prefix('artisan')->name('artisan.')->group(function () {
+    // Modifier le profil
+    Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+});
 
 // Routes protégées par authentification
 Route::middleware('auth')->group(function () {
@@ -46,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
 // Routes d'authentification Laravel Breeze
 require __DIR__.'/auth.php';
+
 // ======================================================
 // ROUTES D'INSCRIPTION
 // ======================================================
@@ -107,6 +129,17 @@ Route::middleware(['auth', 'admin'])
         // Refuse le compte d'un artisan
         Route::post('/artisans/{artisan}/refuser', [ArtisanValidationController::class, 'refuser'])
             ->name('artisans.refuser');
+
+        // ======================================================
+        // GESTION DES PROFILS DES ARTISANS  ⬅️ NOUVEAU
+        // ======================================================
+        // Liste des profils des artisans (ceux qui ont rempli leur profil)
+        Route::get('/profils', [ProfilArtisanController::class, 'index'])
+            ->name('profils.index');
+
+        // Détail d'un profil d'artisan
+        Route::get('/profils/{artisan}', [ProfilArtisanController::class, 'show'])
+            ->name('profils.show');
     });
 
 // ======================================================

@@ -1,86 +1,86 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validation des Artisans</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        th { background: #333; color: white; }
-        .btn-valid { background: green; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; }
-        .btn-refuse { background: red; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; }
-        .input-refus { padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
-        .alert-success { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>👷 Artisans en attente de validation</h1>
+<x-app-layout>
+    <div class="admin-artisans-page">
 
-        {{-- Affichage du message de succès (flash) --}}
-        @if(session('success'))
-            <div class="alert-success">
-                {{ session('success') }}
-            </div>
+        <div class="page-header">
+            <h1>Candidatures artisans en attente</h1>
+            <p class="subtitle">{{ $artisans->total() }} candidature(s) à traiter</p>
+        </div>
+
+        @if (session('success'))
+            <div class="alert-success">{{ session('success') }}</div>
         @endif
 
-        {{-- Vérification si la liste est vide --}}
-        @if($artisans->isEmpty())
-            <p style="color: #888; font-size: 18px;">✅ Aucun artisan en attente de validation pour le moment.</p>
+        @if ($artisans->isEmpty())
+            <div class="empty-state">
+                <p>Aucune candidature en attente pour le moment.</p>
+            </div>
         @else
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>Métier</th>
-                        <th>Zone</th>
-                        <th>Document</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($artisans as $artisan)
-                        <tr>
-                            <td>{{ $artisan->user->name }}</td>
-                            <td>{{ $artisan->user->email }}</td>
-                            <td>{{ $artisan->user->telephone ?? 'Non renseigné' }}</td>
-                            <td>{{ $artisan->profession }}</td>
-                            <td>{{ $artisan->intervention_area }}</td>
-                            <td>
-                                {{-- Lien pour voir le document (si tu as la route) --}}
-                                <a href="{{ route('admin.artisans.document', $artisan) }}" target="_blank">📄 Voir</a>
-                            </td>
-                            <td style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                
-                                {{-- 🔵 BOUTON VALIDER (simple formulaire POST) --}}
-                                <form action="{{ route('admin.artisans.valider', $artisan) }}" method="POST" style="display: inline;">
+            <div class="artisan-list">
+                @foreach ($artisans as $artisan)
+                    <div class="artisan-card">
+
+                        <div class="artisan-info">
+                            <h3>{{ $artisan->user->name }}</h3>
+                            <p class="meta">
+                                <strong>Métier :</strong> {{ ucfirst($artisan->profession) }} ·
+                                <strong>Zone :</strong> {{ $artisan->intervention_area }}
+                            </p>
+                            <p class="meta">
+                                <strong>Email :</strong> {{ $artisan->user->email }} ·
+                                <strong>Tél :</strong> {{ $artisan->user->telephone }}
+                            </p>
+                            <p class="meta">
+                                <strong>Inscrit le :</strong> {{ $artisan->created_at->format('d/m/Y à H:i') }}
+                            </p>
+
+                            @if ($artisan->identity_document)
+                                <a href="{{ route('admin.artisans.document', $artisan) }}" target="_blank" class="doc-link">
+                                    Voir la pièce d'identité
+                                </a>
+                            @endif
+                        </div>
+
+                        <div class="artisan-actions">
+                            <form method="POST" action="{{ route('admin.artisans.valider', $artisan) }}">
+                                @csrf
+                                <button type="submit" class="btn-valider">Valider</button>
+                            </form>
+
+                            {{-- Fallback inline refusal form (accessible sans JS) --}}
+                            <form method="POST" action="{{ route('admin.artisans.refuser', $artisan) }}" class="inline-refuse-form">
+                                @csrf
+                                <input type="text" name="refusal_reason" placeholder="Motif du refus (court)" class="refuse-input" required>
+                                <button type="submit" class="btn-refuser">Refuser</button>
+                            </form>
+
+                            <button type="button" class="btn-refuser" onclick="document.getElementById('refuse-modal-{{ $artisan->id }}').classList.add('is-open')">
+                                Refuser (modifier)
+                            </button>
+                        </div>
+
+                        <!-- Modale de refus (motif obligatoire) -->
+                        <div class="refuse-modal" id="refuse-modal-{{ $artisan->id }}">
+                            <div class="refuse-modal-content">
+                                <h4>Motif du refus</h4>
+                                <form method="POST" action="{{ route('admin.artisans.refuser', $artisan) }}">
                                     @csrf
-                                    <button type="submit" class="btn-valid">✅ Valider</button>
+                                    <textarea name="refusal_reason" rows="4" placeholder="Expliquez pourquoi cette candidature est refusée..." required></textarea>
+                                    <div class="modal-actions">
+                                        <button type="button" class="btn-cancel" onclick="document.getElementById('refuse-modal-{{ $artisan->id }}').classList.remove('is-open')">Annuler</button>
+                                        <button type="submit" class="btn-refuser">Confirmer le refus</button>
+                                    </div>
                                 </form>
+                            </div>
+                        </div>
 
-                                {{-- 🔴 FORMULAIRE REFUSER (avec champ motif) --}}
-                                <form action="{{ route('admin.artisans.refuser', $artisan) }}" method="POST" style="display: flex; gap: 5px; align-items: center;">
-                                    @csrf
-                                    <input type="text" name="refusal_reason" class="input-refus" placeholder="Motif du refus" required>
-                                    <button type="submit" class="btn-refuse">❌ Refuser</button>
-                                </form>
+                    </div>
+                @endforeach
+            </div>
 
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            {{-- Liens de pagination --}}
-            <div style="margin-top: 20px;">
+            <div class="pagination-wrap">
                 {{ $artisans->links() }}
             </div>
         @endif
+
     </div>
-</body>
-</html>
+</x-app-layout>

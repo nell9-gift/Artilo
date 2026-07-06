@@ -11,7 +11,9 @@
                 <div class="px-6 py-5 bg-gray-50 border-b border-gray-200">
                     <p class="mt-1 text-sm text-gray-600">Bienvenue, administrateur. Gérez ici les candidatures et accédez aux validations.</p>
                 </div>
-
+                            <a href="{{ route('admin.profils.index') }}" class="nav-link">
+                👷 Profils des Artisans Partenaires
+            </a>
                 <div class="p-6 space-y-6">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="rounded-xl border border-gray-200 p-5 bg-white shadow-sm">
