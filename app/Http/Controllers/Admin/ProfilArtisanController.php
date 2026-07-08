@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artisan;
-use Illuminate\Http\Request;
 
 class ProfilArtisanController extends Controller
 {

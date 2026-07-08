@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Setting;
+use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
 {
@@ -48,7 +48,7 @@ class SettingSeeder extends Seeder
 
             // Textes du formulaire
             ['key' => 'auth_title',                'value' => 'Bon retour',                                'type' => 'text'],
-            ['key' => 'auth_subtitle',             'value' => 'Connectez-vous pour accéder à votre espace','type' => 'text'],
+            ['key' => 'auth_subtitle',             'value' => 'Connectez-vous pour accéder à votre espace', 'type' => 'text'],
             ['key' => 'auth_email_label',          'value' => 'Email',                                    'type' => 'text'],
             ['key' => 'auth_email_placeholder',    'value' => 'Entrez votre email',                       'type' => 'text'],
             ['key' => 'auth_password_label',       'value' => 'Mot de passe',                             'type' => 'text'],

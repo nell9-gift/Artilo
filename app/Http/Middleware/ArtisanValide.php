@@ -20,7 +20,7 @@ class ArtisanValide
 
             // Vérifie si le profil artisan n'existe pas
             // ou si son statut n'est pas "valide"
-            if (!$artisan || $artisan->statut !== 'valide') {
+            if (! $artisan || $artisan->statut !== 'valide') {
 
                 // Redirige vers la page "en attente"
                 return redirect()->route('artisan.en_attente');
