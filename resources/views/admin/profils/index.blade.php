@@ -15,6 +15,8 @@
         .btn:hover { background: #0056b3; }
         .pagination { margin-top: 20px; }
         .empty { color: #888; font-size: 18px; }
+        .badge-dispo { background: #28a745; color: white; padding: 2px 8px; border-radius: 4px; font-size: 13px; }
+        .badge-indispo { background: #6c757d; color: white; padding: 2px 8px; border-radius: 4px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -32,6 +34,7 @@
                         <th>Expérience</th>
                         <th>Photos</th>
                         <th>Adresse</th>
+                        <th>Disponibilité</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -49,6 +52,15 @@
                                 @endif
                             </td>
                             <td>{{ $artisan->address ?? 'Non renseignée' }}</td>
+                            <td>
+                                @if($artisan->availability_start_time && $artisan->availability_end_time)
+                                    <span class="badge-dispo">
+                                        {{ $artisan->availability_start_time->format('H:i') }} - {{ $artisan->availability_end_time->format('H:i') }}
+                                    </span>
+                                @else
+                                    <span class="badge-indispo">Non renseignée</span>
+                                @endif
+                            </td>
                             <td>
                                 <a href="{{ route('admin.profils.show', $artisan->id) }}" class="btn">👁️ Voir</a>
                             </td>

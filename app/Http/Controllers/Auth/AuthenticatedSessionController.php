@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
 
         // Si c'est un admin, direction le panneau admin
         if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.MaPage');
         }
 
         // Si c'est un artisan, on vérifie que son dossier est validé
@@ -56,7 +56,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         // Sinon (customer, ou artisan validé), direction le tableau de bord
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('MaPage', absolute: false));
     }
 
     // Déconnecte l'utilisateur

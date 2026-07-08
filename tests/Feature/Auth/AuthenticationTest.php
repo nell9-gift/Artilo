@@ -8,6 +8,14 @@ test('login screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
+test('authenticated users are redirected to MaPage from guest pages', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get('/login');
+
+    $response->assertRedirect('/MaPage');
+});
+
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
@@ -17,10 +25,10 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('MaPage', absolute: false));
 });
 
-test('admin users are redirected to the admin dashboard after login', function () {
+test('admin users are redirected to the admin MaPage after login', function () {
     $user = User::factory()->create(['role' => 'admin']);
 
     $response = $this->post('/login', [
@@ -29,16 +37,16 @@ test('admin users are redirected to the admin dashboard after login', function (
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('admin.dashboard', absolute: false));
+    $response->assertRedirect(route('admin.MaPage', absolute: false));
 });
 
-test('admin users can access the admin dashboard route', function () {
+test('admin users can access the admin MaPage route', function () {
     $user = User::factory()->create(['role' => 'admin']);
 
-    $response = $this->actingAs($user)->get(route('admin.dashboard'));
+    $response = $this->actingAs($user)->get(route('admin.MaPage'));
 
     $response->assertStatus(200);
-    $response->assertSee('Tableau de bord admin');
+    $response->assertSee('MaPage admin');
 });
 
 test('users can not authenticate with invalid password', function () {

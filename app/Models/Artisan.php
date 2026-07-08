@@ -17,18 +17,26 @@ class Artisan extends Model
     'refusal_reason',
     'schedules',
     'description',
-    'years_experience',   // ← modifié
+    'years_experience',
     'photos',
-    'average_rating',     // ← modifié
-    'address',            // ← modifié
+    'average_rating',
+    'address',
     'latitude',
     'longitude',
+    'mobile_money_number',
+    'mobile_money_operator',
+    'availability_start_time',
+    'availability_end_time',
+    'max_distance_km',
 ];
 
     // Automatic conversion of the schedules and photos fields to PHP arrays
     protected $casts = [
         'schedules' => 'array',
         'photos' => 'array',
+        'availability_start_time' => 'datetime:H:i',
+        'availability_end_time' => 'datetime:H:i',
+        'max_distance_km' => 'integer',
     ];
 
     // Relation: an artisan belongs to a user

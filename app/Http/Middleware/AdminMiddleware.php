@@ -15,7 +15,7 @@ class AdminMiddleware
             return $next($request);
         }
 
-        // Sinon, rediriger vers le dashboard (ou une autre page)
-        return redirect('/dashboard')->with('error', 'Accès refusé : vous n\'êtes pas administrateur.');
+        // Sinon, rediriger vers MaPage (ou une autre page)
+        return redirect('/MaPage')->with('error', 'Accès refusé : vous n\'êtes pas administrateur.');
     }
 }

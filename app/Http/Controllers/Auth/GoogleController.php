@@ -29,9 +29,9 @@ class GoogleController extends Controller
         Auth::login($user);
 
         if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.MaPage');
         }
 
-        return redirect()->route('dashboard');
+        return redirect()->route('MaPage');
     }
 }
