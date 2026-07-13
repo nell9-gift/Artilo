@@ -88,10 +88,10 @@ class Mission extends Model
     /**
      * Relation: la mission est liée à un métier catalogué
      */
-   // public function metier()
-    //{
-     //   return $this->belongsTo(Metier::class);
-   // }
+    public function metier()
+    {
+        return $this->belongsTo(Metier::class);
+    }
 
     /**
      * Relation: la mission a un diagnostic (1-1)

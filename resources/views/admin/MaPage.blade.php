@@ -770,15 +770,9 @@
                                                     <td>
                                                         <div class="flex items-center justify-center gap-2">
                                                             <a href="{{ route('admin.attributions.show', $demande) }}" 
-                                                               class="admin-action secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                                                                👁️ Voir
+                                                               class="admin-action" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                                                                🔍 Voir & Attribuer
                                                             </a>
-                                                            <form action="{{ route('admin.attributions.attribuer', $demande) }}" method="POST" style="display:inline;">
-                                                                @csrf
-                                                                <button type="submit" class="admin-action" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                                                                    🔍 Attribuer
-                                                                </button>
-                                                            </form>
                                                         </div>
                                                     </td>
                                                 </tr>
