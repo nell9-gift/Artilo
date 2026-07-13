@@ -646,10 +646,6 @@ $factoryImage = asset('images/usine.jfif');
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
                     Missions <span class="count">{{ count($missions) }}</span>
                 </button>
-                <button class="pro-link" data-tab="devis">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
-                    Diagnostic &amp; Devis
-                </button>
                 <button class="pro-link" data-tab="history">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
                     Historique
@@ -847,36 +843,9 @@ $factoryImage = asset('images/usine.jfif');
                                             <button type="submit" class="m-btn refuse" onclick="return confirm('Refuser cette mission ? Un autre prestataire sera recherché.')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>Refuser</button>
                                         </form>
                                     @endif
-                                    <button class="m-btn diag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a3 3 0 1 0 6 0 3 3 0 0 0-6 0z"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Diagnostic</button>
-                                    <button class="m-btn devis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Devis</button>
                                 </div>
                             </div>
                         @endforeach
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===== DIAGNOSTIC & DEVIS ===== -->
-            <section class="pro-panel" data-panel="devis">
-                <div class="grid-2">
-                    <div class="card">
-                        <div class="sec-head"><div><span class="eyebrow">Étape 1</span><h3>Diagnostic sur site</h3></div></div>
-                        <div class="row"><div class="l"><b>ART-2401 · Plomberie</b><small>Kodjo A. — Adidogomé</small></div><span class="chip">À planifier</span></div>
-                        <div class="row"><div class="l"><b>ART-2398 · Électricité</b><small>Ama D. — Bè</small></div><span class="chip" style="background:rgba(5,150,105,.14);color:var(--p-green);border-color:rgba(5,150,105,.2)">Fait</span></div>
-                        <div class="empty" style="margin-top:.6rem">Notez vos constats, prenez des photos et estimez la charge de travail avant le devis.</div>
-                    </div>
-                    <div class="card">
-                        <div class="sec-head"><div><span class="eyebrow">Étape 2</span><h3>Devis interne</h3></div></div>
-                        <label class="lbl">Intitulé</label>
-                        <input type="text" class="fld" value="Réparation fuite + remplacement joints" style="margin-bottom:.9rem">
-                        <div class="grid-2b" style="gap:.6rem">
-                            <div><label class="lbl">Main d'œuvre</label><input type="text" class="fld" value="45 000 F"></div>
-                            <div><label class="lbl">Matériaux</label><input type="text" class="fld" value="30 000 F"></div>
-                        </div>
-                        <div class="row" style="margin-top:.9rem;background:rgba(124,58,237,.06);border-color:rgba(124,58,237,.16)"><div class="l"><b>Total estimé</b><small>Commission 7% déduite</small></div><span class="amt in">75 000 F</span></div>
-                        <button class="m-btn devis" style="width:100%;justify-content:center;padding:.75rem;margin-top:.6rem">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5v14"/></svg>Envoyer le devis
-                        </button>
                     </div>
                 </div>
             </section>
@@ -1124,27 +1093,6 @@ $factoryImage = asset('images/usine.jfif');
                 root.querySelectorAll('#missionList .mission').forEach(m => {
                     m.style.display = m.dataset.search.includes(q) ? '' : 'none';
                 });
-            });
-
-            // Accept / Refuse
-            root.addEventListener('click', function(e) {
-                const acc = e.target.closest('.m-btn.accept');
-                const ref = e.target.closest('.m-btn.refuse');
-                if (!acc && !ref) return;
-                const card = e.target.closest('.mission');
-                const tag = card.querySelector('.state-tag');
-                if (acc) {
-                    tag.className = 'state-tag accepted';
-                    tag.textContent = 'Acceptée';
-                    acc.remove();
-                    if (ref) ref.remove();
-                    card.style.borderColor = 'rgba(37,99,235,.4)';
-                } else {
-                    card.style.transition = '.35s';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateX(40px)';
-                    setTimeout(() => card.remove(), 350);
-                }
             });
 
             // Toggle disponibilités
