@@ -38,7 +38,7 @@
     ];
 
     // ---------------------------------------------------------
-    // 3. MENU LATERAL - tous les modules demandes
+    // 3. MENU LATERAL - tous les modules demandes (SUPPRESSION DE L'ONGLET DEMANDE)
     // ---------------------------------------------------------
     $menuGroups = [
         [
@@ -113,7 +113,7 @@
     $customSections = ['candidatures', 'profils', 'attributions', 'metiers'];
 
     // ---------------------------------------------------------
-    // 4. ICONES SVG (Lucide)
+    // 4. ICONES SVG (Lucide) + Images décoratives
     // ---------------------------------------------------------
     $svgIcon = function ($name, $class = 'admin-icon') {
         $icons = [
@@ -135,6 +135,11 @@
             'check'     => '<path d="M20 6 9 17l-5-5"/>',
             'plus'      => '<path d="M12 5v14"/><path d="M5 12h14"/>',
             'trash'     => '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+            'check-circle' => '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+            'clock'     => '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+            'arrow-right' => '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+            'user-check' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>',
+            'calendar'  => '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
         ];
         return '<svg class="' . $class . '" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' . ($icons[$name] ?? $icons['home']) . '</svg>';
     };
@@ -162,7 +167,7 @@
                 --sidebar-w-collapsed: 76px;
                 min-height: 100vh;
                 color: var(--admin-primary-text);
-                background:
+                background: 
                     radial-gradient(1200px 600px at 88% -8%, color-mix(in srgb, var(--admin-secondary) 16%, transparent), transparent 60%),
                     radial-gradient(1000px 620px at -6% 4%, color-mix(in srgb, var(--admin-primary) 18%, transparent), transparent 60%),
                     linear-gradient(160deg, var(--admin-bg), #ffffff 46%, color-mix(in srgb, var(--admin-primary) 5%, #fff));
@@ -184,7 +189,7 @@
                 overflow-y: auto;
                 overflow-x: hidden;
                 color: #fff;
-                background:
+                background: 
                     radial-gradient(600px 260px at 20% -5%, color-mix(in srgb, var(--admin-primary) 55%, transparent), transparent 70%),
                     linear-gradient(185deg, #14101f 0%, #0d0a17 55%, #08060f 100%);
                 border-right: 1px solid rgba(255,255,255,.07);
@@ -294,14 +299,66 @@
                 box-shadow: 0 0 0 4px color-mix(in srgb, var(--admin-primary) 14%, transparent);
             }
 
-            .admin-profile { display: flex; align-items: center; gap: .65rem; }
+            .admin-profile { 
+                display: flex; 
+                align-items: center; 
+                gap: .65rem;
+                position: relative;
+            }
+            .admin-avatar-wrapper {
+                position: relative;
+                cursor: pointer;
+            }
             .admin-avatar {
                 width: 42px; height: 42px; border-radius: 12px; overflow: hidden; flex: 0 0 auto;
                 display: grid; place-items: center; color: #fff; font-weight: 900;
                 background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
                 box-shadow: 0 12px 24px -14px var(--admin-primary);
+                transition: transform .2s, box-shadow .2s;
+            }
+            .admin-avatar:hover {
+                transform: scale(1.05);
+                box-shadow: 0 16px 32px -14px var(--admin-primary);
             }
             .admin-avatar img { width: 100%; height: 100%; object-fit: cover; }
+            
+            .admin-profile-dropdown {
+                position: absolute;
+                top: calc(100% + 8px);
+                right: 0;
+                background: #fff;
+                border-radius: 14px;
+                padding: .5rem;
+                min-width: 200px;
+                box-shadow: 0 20px 60px -20px rgba(0,0,0,.35);
+                border: 1px solid color-mix(in srgb, var(--admin-primary) 10%, transparent);
+                opacity: 0;
+                pointer-events: none;
+                transform: translateY(-6px) scale(.98);
+                transition: opacity .2s, transform .2s;
+                z-index: 50;
+            }
+            .admin-profile-dropdown.show {
+                opacity: 1;
+                pointer-events: auto;
+                transform: translateY(0) scale(1);
+            }
+            .admin-profile-dropdown a, .admin-profile-dropdown button {
+                display: flex; align-items: center; gap: .6rem;
+                padding: .5rem .7rem; border-radius: 8px;
+                font-weight: 600; font-size: .85rem;
+                color: var(--admin-primary-text);
+                transition: background .15s;
+                width: 100%; text-align: left;
+                background: none; border: none; cursor: pointer;
+            }
+            .admin-profile-dropdown a:hover, .admin-profile-dropdown button:hover {
+                background: color-mix(in srgb, var(--admin-primary) 8%, #fff);
+            }
+            .admin-profile-dropdown .admin-icon {
+                width: 1rem; height: 1rem; flex: 0 0 auto;
+                color: var(--admin-muted);
+            }
 
             .admin-content { padding: 1.5rem 1.25rem 3rem; }
             @media (min-width: 1024px) { .admin-content { padding: 1.75rem 2rem 3rem; } }
@@ -452,6 +509,43 @@
             @media (prefers-reduced-motion: reduce) {
                 * { animation: none !important; transition: none !important; }
             }
+            
+            /* Style pour les cartes d'attribution avec icônes */
+            .attribution-card {
+                transition: transform .2s, box-shadow .2s;
+            }
+            .attribution-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px -16px rgba(0,0,0,.1);
+            }
+            .attribution-icon {
+                width: 40px; height: 40px; border-radius: 12px;
+                display: grid; place-items: center;
+                flex: 0 0 auto;
+            }
+            .attribution-timer {
+                display: inline-flex; align-items: center; gap: .4rem;
+                padding: .2rem .6rem; border-radius: 999px;
+                font-size: .75rem; font-weight: 700;
+            }
+            .attribution-timer.urgent { background: #fee2e2; color: #dc2626; }
+            .attribution-timer.warning { background: #fef3c7; color: #d97706; }
+            .attribution-timer.safe { background: #d1fae5; color: #059669; }
+            
+            /* Images décoratives */
+            .deco-image {
+                position: absolute; opacity: .08; pointer-events: none;
+                z-index: 0;
+            }
+            .admin-card .deco-image {
+                position: absolute; right: -20px; bottom: -20px;
+                width: 160px; opacity: .06;
+                z-index: 0;
+            }
+            .admin-card {
+                position: relative; overflow: hidden;
+            }
+            .admin-card > *:not(.deco-image) { position: relative; z-index: 1; }
         </style>
 
         <div class="admin-overlay lg:hidden" @click="sidebarOpen = false" aria-hidden="true"></div>
@@ -461,18 +555,18 @@
             {{-- SIDEBAR --}}
             <aside class="admin-sidebar" aria-label="Navigation administrateur">
                 <div class="admin-brand">
-    <span class="admin-brand-logo">
-        @if ($logo && file_exists(public_path($logo)))
-            <img src="{{ asset($logo) }}" alt="{{ $siteName }}">
-        @else
-            {{ strtoupper(substr($siteName, 0, 1)) }}
-        @endif
-    </span>
-    <span class="admin-brand-text">
-        <span class="admin-brand-name">{{ $siteName }}</span><br>
-        <span class="admin-brand-sub">Admin</span>
-    </span>
-</div>
+                    <span class="admin-brand-logo">
+                        @if ($logo && file_exists(public_path($logo)))
+                            <img src="{{ asset($logo) }}" alt="{{ $siteName }}">
+                        @else
+                            {{ strtoupper(substr($siteName, 0, 1)) }}
+                        @endif
+                    </span>
+                    <span class="admin-brand-text">
+                        <span class="admin-brand-name">{{ $siteName }}</span><br>
+                        <span class="admin-brand-sub">Admin</span>
+                    </span>
+                </div>
 
                 <nav class="admin-nav">
                     <button type="button" class="admin-nav-btn" :class="{ 'is-active': activeTab === 'dashboard' }" @click="go('dashboard')">
@@ -534,17 +628,38 @@
                         <span class="admin-dot"></span>
                     </button>
 
-                    <div class="admin-profile">
-                        <span class="admin-avatar">
-                            @if ($adminPhoto)
-                                <img src="{{ $adminPhoto }}" alt="Photo administrateur">
-                            @else
-                                {{ strtoupper(substr($adminUser?->name ?? 'A', 0, 1)) }}
-                            @endif
-                        </span>
+                    <div class="admin-profile" x-data="{ open: false }" @click.outside="open = false">
+                        <div class="admin-avatar-wrapper" @click="open = !open">
+                            <span class="admin-avatar">
+                                @if ($adminPhoto)
+                                    <img src="{{ $adminPhoto }}" alt="Photo administrateur">
+                                @else
+                                    {{ strtoupper(substr($adminUser?->name ?? 'A', 0, 1)) }}
+                                @endif
+                            </span>
+                        </div>
                         <div class="hidden sm:block leading-tight">
                             <p class="font-black text-sm">{{ $adminUser?->name ?? 'Administrateur' }}</p>
                             <p class="text-xs" style="color: var(--admin-muted)">Administrateur</p>
+                        </div>
+                        
+                        <div class="admin-profile-dropdown" :class="{ 'show': open }">
+                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition">
+                                {!! $svgIcon('user-check') !!}
+                                <span>Mon profil</span>
+                            </a>
+                            <a href="{{ route('admin.MaPage') }}" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition">
+                                {!! $svgIcon('settings') !!}
+                                <span>Paramètres</span>
+                            </a>
+                            <div class="border-t my-1" style="border-color: color-mix(in srgb, var(--admin-primary) 10%, transparent);"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition w-full text-left">
+                                    {!! $svgIcon('logout') !!}
+                                    <span>Déconnexion</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </header>
@@ -608,16 +723,16 @@
                             <article class="admin-card p-5 lg:col-span-2">
                                 <div class="flex items-center justify-between gap-3">
                                     <div>
-                                        <h2 class="text-lg font-black">Activite des missions</h2>
-                                        <p class="text-sm" style="color: var(--admin-muted)">Evolution sur les 7 derniers mois</p>
+                                        <h2 class="text-lg font-black">Activité des missions</h2>
+                                        <p class="text-sm" style="color: var(--admin-muted)">Évolution sur les 7 derniers mois</p>
                                     </div>
-                                    <span class="admin-status">Temps reel</span>
+                                    <span class="admin-status">Temps réel</span>
                                 </div>
                                 <div class="mt-4" style="height: 280px"><canvas id="chartMissions"></canvas></div>
                             </article>
 
                             <article class="admin-card p-5">
-                                <h2 class="text-lg font-black">Repartition des demandes</h2>
+                                <h2 class="text-lg font-black">Répartition des demandes</h2>
                                 <p class="text-sm" style="color: var(--admin-muted)">Par statut</p>
                                 <div class="mt-4" style="height: 280px"><canvas id="chartStatuts"></canvas></div>
                             </article>
@@ -625,14 +740,14 @@
 
                         <div class="grid gap-4 lg:grid-cols-3">
                             <article class="admin-card p-5">
-                                <h2 class="text-lg font-black">Metiers demandes</h2>
+                                <h2 class="text-lg font-black">Métiers demandés</h2>
                                 <p class="text-sm" style="color: var(--admin-muted)">Top interventions</p>
                                 <div class="mt-4" style="height: 260px"><canvas id="chartMetiers"></canvas></div>
                             </article>
 
                             <article class="admin-card p-5 lg:col-span-2">
                                 <div class="flex items-center justify-between gap-3">
-                                    <h2 class="text-lg font-black">Candidatures recentes</h2>
+                                    <h2 class="text-lg font-black">Candidatures récentes</h2>
                                     <a href="{{ route('admin.artisans.index') }}" class="text-sm font-black" style="color: var(--admin-primary)">Tout voir</a>
                                 </div>
                                 <div class="mt-4 divide-y" style="border-color: color-mix(in srgb, var(--admin-primary) 10%, transparent)">
@@ -642,7 +757,7 @@
                                                 <p class="font-black">{{ $artisan->user->name ?? 'Artisan' }}</p>
                                                 <p class="text-sm" style="color: var(--admin-muted)">{{ ucfirst($artisan->profession) }} - {{ $artisan->intervention_area }}</p>
                                             </div>
-                                            <a href="{{ route('admin.artisans.index') }}" class="admin-status">Verifier</a>
+                                            <a href="{{ route('admin.artisans.index') }}" class="admin-status">Vérifier</a>
                                         </div>
                                     @empty
                                         <p class="py-5 text-sm" style="color: var(--admin-muted)">Aucune candidature en attente pour le moment.</p>
@@ -657,7 +772,7 @@
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <h2 class="admin-title">Candidatures - en attente</h2>
-                                <p class="admin-subtitle mt-1">{{ $pendingCount }} candidature(s) a valider ou refuser.</p>
+                                <p class="admin-subtitle mt-1">{{ $pendingCount }} candidature(s) à valider ou refuser.</p>
                             </div>
                             <a href="{{ route('admin.artisans.index') }}" class="admin-action">Voir les candidatures</a>
                         </div>
@@ -666,7 +781,7 @@
                                 <div class="grid gap-3 border-b bg-white p-4 md:grid-cols-[1fr_1fr_auto]" style="border-color: color-mix(in srgb, var(--admin-primary) 10%, transparent)">
                                     <div>
                                         <p class="font-black">{{ $artisan->user->name ?? 'Artisan' }}</p>
-                                        <p class="text-sm" style="color: var(--admin-muted)">{{ $artisan->user->email ?? 'Email non renseigne' }}</p>
+                                        <p class="text-sm" style="color: var(--admin-muted)">{{ $artisan->user->email ?? 'Email non renseigné' }}</p>
                                     </div>
                                     <div>
                                         <p class="font-bold">{{ ucfirst($artisan->profession) }}</p>
@@ -675,7 +790,7 @@
                                     <span class="admin-status self-center">En attente</span>
                                 </div>
                             @empty
-                                <p class="bg-white p-5 text-sm" style="color: var(--admin-muted)">Aucune candidature recente.</p>
+                                <p class="bg-white p-5 text-sm" style="color: var(--admin-muted)">Aucune candidature récente.</p>
                             @endforelse
                         </div>
                     </section>
@@ -686,18 +801,18 @@
                             <div class="flex flex-wrap items-center justify-between gap-3">
                                 <div>
                                     <h2 class="admin-title">Profils partenaires</h2>
-                                    <p class="admin-subtitle mt-1">Etat des profils prestataires de la plateforme.</p>
+                                    <p class="admin-subtitle mt-1">État des profils prestataires de la plateforme.</p>
                                 </div>
                                 <a href="{{ route('admin.profils.index') }}" class="admin-action">Voir les profils</a>
                             </div>
                             <div class="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div class="rounded-xl p-4" style="background: color-mix(in srgb, var(--admin-primary) 7%, white)">
                                     <p class="font-black text-lg">{{ $incompleteProfilesCount }} profil(s) incomplet(s)</p>
-                                    <p class="mt-1 text-sm" style="color: var(--admin-muted)">Documents, photos, adresse ou description a completer.</p>
+                                    <p class="mt-1 text-sm" style="color: var(--admin-muted)">Documents, photos, adresse ou description à compléter.</p>
                                 </div>
                                 <div class="rounded-xl p-4" style="background: color-mix(in srgb, var(--admin-secondary) 10%, white)">
                                     <p class="font-black text-lg">{{ $profileCount }} profil(s) enrichi(s)</p>
-                                    <p class="mt-1 text-sm" style="color: var(--admin-muted)">Prets pour la vitrine publique apres verification.</p>
+                                    <p class="mt-1 text-sm" style="color: var(--admin-muted)">Prêts pour la vitrine publique après vérification.</p>
                                 </div>
                             </div>
                             <div class="mt-4 grid gap-4 sm:grid-cols-3">
@@ -711,19 +826,20 @@
                                 </div>
                                 <div class="rounded-xl p-4 text-center" style="background: color-mix(in srgb, #ef4444 12%, white)">
                                     <p class="text-2xl font-black" style="color:#dc2626">{{ $rejectedCount }}</p>
-                                    <p class="text-sm" style="color: var(--admin-muted)">Refuses</p>
+                                    <p class="text-sm" style="color: var(--admin-muted)">Refusés</p>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {{-- ATTRIBUTIONS --}}
+                    {{-- ATTRIBUTIONS (CONTENU COMPLÈTEMENT REFONDU) --}}
                     <section x-show="activeTab === 'attributions'" x-cloak class="admin-section space-y-5">
                         
+                        {{-- Section 1 : Demandes en attente d'attribution --}}
                         <div class="admin-card p-5">
                             <div class="flex flex-wrap items-center justify-between gap-3">
                                 <div>
-                                    <h2 class="admin-title">Demandes en attente d'attribution</h2>
+                                    <h2 class="admin-title">📋 Demandes en attente</h2>
                                     <p class="admin-subtitle mt-1">
                                         <span class="font-black" style="color: var(--admin-secondary)">{{ $demandesEnAttente->total() ?? 0 }}</span> 
                                         demande(s) en attente d'un prestataire.
@@ -735,50 +851,36 @@
                             </div>
 
                             @if(isset($demandesEnAttente) && $demandesEnAttente->isNotEmpty())
-                                <div class="mt-5 overflow-x-auto rounded-xl border" style="border-color: color-mix(in srgb, var(--admin-primary) 12%, transparent)">
-                                    <table class="admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Client</th>
-                                                <th>Métier</th>
-                                                <th>Description</th>
-                                                <th>Date</th>
-                                                <th style="text-align:center">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($demandesEnAttente as $demande)
-                                                <tr>
-                                                    <td class="font-black">#{{ $demande->id }}</td>
-                                                    <td>
-                                                        <p class="font-black">{{ $demande->particulier->name ?? 'Client' }}</p>
-                                                        <p class="text-xs" style="color: var(--admin-muted)">{{ $demande->particulier->email ?? '' }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <span class="admin-status" style="background: color-mix(in srgb, var(--admin-primary) 12%, #fff); color: var(--admin-primary)">
+                                <div class="mt-5 space-y-3">
+                                    @foreach($demandesEnAttente as $demande)
+                                        <div class="attribution-card flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-4 rounded-xl border" style="border-color: color-mix(in srgb, var(--admin-primary) 12%, transparent); background: #fff;">
+                                            <div class="flex items-start gap-3 flex-1">
+                                                <div class="attribution-icon" style="background: color-mix(in srgb, var(--admin-primary) 12%, #fff); color: var(--admin-primary);">
+                                                    {!! $svgIcon('user-check') !!}
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center gap-2 flex-wrap">
+                                                        <p class="font-black">#{{ $demande->id }} - {{ $demande->particulier->name ?? 'Client' }}</p>
+                                                        <span class="admin-status" style="background: color-mix(in srgb, var(--admin-primary) 12%, #fff); color: var(--admin-primary); font-size: .7rem; padding: .1rem .5rem;">
                                                             {{ $demande->metier_requis ?? 'Non défini' }}
                                                         </span>
-                                                    </td>
-                                                    <td>
-                                                        <p class="truncate max-w-[200px]">{{ $demande->description ?? 'Aucune description' }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <p class="font-black">{{ $demande->created_at->format('d/m/Y') }}</p>
-                                                        <p class="text-xs" style="color: var(--admin-muted)">{{ $demande->created_at->format('H:i') }}</p>
-                                                    </td>
-                                                    <td>
-                                                        <div class="flex items-center justify-center gap-2">
-                                                            <a href="{{ route('admin.attributions.show', $demande) }}" 
-                                                               class="admin-action" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                                                                🔍 Voir & Attribuer
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                                    </div>
+                                                    <p class="text-sm" style="color: var(--admin-muted);">
+                                                        {{ $demande->particulier->email ?? 'Email non renseigné' }}
+                                                        <span class="mx-1">•</span>
+                                                        {{ $demande->created_at->format('d/m/Y à H:i') }}
+                                                    </p>
+                                                    <p class="text-sm mt-1 truncate max-w-md">{{ $demande->description ?? 'Aucune description' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 flex-shrink-0">
+                                                <a href="{{ route('admin.attributions.show', $demande) }}" 
+                                                   class="admin-action" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                                    🔍 Attribuer
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                                 @if(isset($demandesEnAttente) && method_exists($demandesEnAttente, 'links'))
                                     <div class="mt-4">
@@ -787,20 +889,21 @@
                                 @endif
                             @else
                                 <div class="admin-empty mt-5">
-                                    {!! $svgIcon('check') !!}
-                                    <p class="font-black">Aucune demande en attente</p>
-                                    <p class="text-sm">Toutes les demandes ont déjà un prestataire attribué.</p>
+                                    {!! $svgIcon('check-circle') !!}
+                                    <p class="font-black text-lg" style="color: #10b981;">Toutes les demandes sont attribuées</p>
+                                    <p class="text-sm" style="color: var(--admin-muted)">Aucune demande en attente de prestataire pour le moment.</p>
                                 </div>
                             @endif
                         </div>
 
+                        {{-- Section 2 : Missions en attente d'acceptation --}}
                         <div class="admin-card p-5">
                             <div class="flex flex-wrap items-center justify-between gap-3">
                                 <div>
-                                    <h2 class="admin-title">Missions en attente d'acceptation</h2>
+                                    <h2 class="admin-title">⏳ Missions en attente</h2>
                                     <p class="admin-subtitle mt-1">
-                                        <span class="font-black" style="color: var(--admin-secondary)">{{ $missionsAffectees->total() ?? 0 }}</span> 
-                                        prestataire(s) ont été sollicités.
+                                        <span class="font-black" style="color: #0ea5e9;">{{ $missionsAffectees->total() ?? 0 }}</span> 
+                                        prestataire(s) sollicité(s) en attente de réponse.
                                     </p>
                                 </div>
                                 <span class="admin-status" style="background: color-mix(in srgb, #0ea5e9 14%, #fff); color: #0ea5e9;">
@@ -809,77 +912,61 @@
                             </div>
 
                             @if(isset($missionsAffectees) && $missionsAffectees->isNotEmpty())
-                                <div class="mt-5 overflow-x-auto rounded-xl border" style="border-color: color-mix(in srgb, var(--admin-primary) 12%, transparent)">
-                                    <table class="admin-table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Client</th>
-                                                <th>Prestataire</th>
-                                                <th>Métier</th>
-                                                <th>Expire dans</th>
-                                                <th style="text-align:center">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($missionsAffectees as $mission)
-                                                <tr>
-                                                    <td class="font-black">#{{ $mission->id }}</td>
-                                                    <td>
-                                                        <p class="font-black">{{ $mission->particulier->name ?? 'Client' }}</p>
-                                                        <p class="text-xs" style="color: var(--admin-muted)">{{ $mission->particulier->email ?? '' }}</p>
-                                                    </td>
-                                                    <td>
-                                                        @if($mission->artisan)
-                                                            <p class="font-black">{{ $mission->artisan->user->name ?? 'Prestataire' }}</p>
-                                                            <p class="text-xs" style="color: var(--admin-muted)">Score: {{ $mission->artisan->score_interne ?? 'N/A' }}</p>
-                                                        @else
-                                                            <span class="text-sm" style="color: var(--admin-muted)">En attente</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <span class="admin-status" style="background: color-mix(in srgb, var(--admin-primary) 12%, #fff); color: var(--admin-primary)">
+                                <div class="mt-5 space-y-3">
+                                    @foreach($missionsAffectees as $mission)
+                                        @php
+                                            $minutesRestantes = now()->diffInMinutes($mission->expire_le, false);
+                                            $isExpired = $minutesRestantes <= 0;
+                                            $timerClass = $isExpired ? 'urgent' : ($minutesRestantes < 5 ? 'warning' : 'safe');
+                                        @endphp
+                                        <div class="attribution-card flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-4 rounded-xl border" style="border-color: color-mix(in srgb, #0ea5e9 12%, transparent); background: #fff;">
+                                            <div class="flex items-start gap-3 flex-1">
+                                                <div class="attribution-icon" style="background: color-mix(in srgb, #0ea5e9 12%, #fff); color: #0ea5e9;">
+                                                    {!! $svgIcon('clock') !!}
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center gap-2 flex-wrap">
+                                                        <p class="font-black">#{{ $mission->id }} - Mission</p>
+                                                        <span class="admin-status" style="background: color-mix(in srgb, var(--admin-primary) 12%, #fff); color: var(--admin-primary); font-size: .7rem; padding: .1rem .5rem;">
                                                             {{ $mission->metier_requis ?? 'Non défini' }}
                                                         </span>
-                                                    </td>
-                                                    <td>
-                                                        @if($mission->expire_le)
-                                                            @php
-                                                                $minutesRestantes = now()->diffInMinutes($mission->expire_le, false);
-                                                                $isExpired = $minutesRestantes <= 0;
-                                                            @endphp
-                                                            <span class="admin-status" style="background: {{ $isExpired ? 'color-mix(in srgb, #ef4444 14%, #fff)' : 'color-mix(in srgb, var(--admin-secondary) 14%, #fff)' }}; color: {{ $isExpired ? '#dc2626' : 'var(--admin-secondary)' }}">
-                                                                @if($isExpired)
-                                                                    ⚠️ Expiré
-                                                                @else
-                                                                    ⏱️ {{ $minutesRestantes }} min
-                                                                @endif
-                                                            </span>
-                                                        @else
-                                                            <span class="text-sm" style="color: var(--admin-muted)">N/A</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="flex items-center justify-center gap-2">
-                                                            <a href="{{ route('admin.attributions.show', $mission) }}" 
-                                                               class="admin-action secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                                                                👁️ Voir
-                                                            </a>
-                                                            @if($mission->statut === 'affectee')
-                                                                <form action="{{ route('admin.attributions.annuler', $mission) }}" method="POST" style="display:inline;">
-                                                                    @csrf
-                                                                    <button type="submit" class="admin-action" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 18px 34px -20px #dc2626;" 
-                                                                            onclick="return confirm('Annuler cette attribution ? La mission sera remise en attente.')">
-                                                                        ❌ Annuler
-                                                                    </button>
-                                                                </form>
+                                                        <span class="attribution-timer {{ $timerClass }}">
+                                                            {!! $svgIcon('clock', 'w-3 h-3') !!}
+                                                            @if($isExpired)
+                                                                ⚠️ Expiré
+                                                            @else
+                                                                {{ $minutesRestantes }} min restantes
                                                             @endif
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-sm mt-1" style="color: var(--admin-muted);">
+                                                        <span>Client: {{ $mission->particulier->name ?? 'Client' }}</span>
+                                                        @if($mission->artisan)
+                                                            <span class="mx-1">•</span>
+                                                            <span>Prestataire: {{ $mission->artisan->user->name ?? 'Prestataire' }}</span>
+                                                            <span class="mx-1">•</span>
+                                                            <span>Score: {{ $mission->artisan->score_interne ?? 'N/A' }}</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 flex-shrink-0">
+                                                <a href="{{ route('admin.attributions.show', $mission) }}" 
+                                                   class="admin-action secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                                    👁️ Voir
+                                                </a>
+                                                @if($mission->statut === 'affectee')
+                                                    <form action="{{ route('admin.attributions.annuler', $mission) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="admin-action danger" style="padding: 0.5rem 1rem; font-size: 0.8rem;" 
+                                                                onclick="return confirm('Annuler cette attribution ? La mission sera remise en attente.')">
+                                                            ❌ Annuler
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                                 @if(isset($missionsAffectees) && method_exists($missionsAffectees, 'links'))
                                     <div class="mt-4">
@@ -888,30 +975,34 @@
                                 @endif
                             @else
                                 <div class="admin-empty mt-5">
-                                    {!! $svgIcon('check') !!}
-                                    <p class="font-black">Aucune mission en attente</p>
-                                    <p class="text-sm">Toutes les missions affectées ont reçu une réponse.</p>
+                                    {!! $svgIcon('check-circle') !!}
+                                    <p class="font-black text-lg" style="color: #10b981;">Aucune mission en attente</p>
+                                    <p class="text-sm" style="color: var(--admin-muted)">Toutes les missions affectées ont reçu une réponse.</p>
                                 </div>
                             @endif
                         </div>
 
-                        <div class="admin-card p-5" style="background: color-mix(in srgb, var(--admin-primary) 4%, #fff); border-style: dashed;">
-                            <div class="flex flex-wrap items-center justify-between gap-3">
-                                <div>
-                                    <h3 class="font-black">💡 Astuce</h3>
-                                    <p class="text-sm" style="color: var(--admin-muted)">
-                                        L'attribution est automatique. Cliquez sur "Attribuer" pour lancer la recherche du meilleur prestataire disponible.
-                                        Le prestataire a {{ config('artilo.delai_acceptation_minutes', 20) }} minutes pour accepter.
+                        {{-- Section 3 : Aide et informations --}}
+                        <div class="admin-card p-5" style="background: color-mix(in srgb, var(--admin-primary) 3%, #fff); border-style: dashed;">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="attribution-icon" style="background: color-mix(in srgb, var(--admin-secondary) 14%, #fff); color: var(--admin-secondary); width: 48px; height: 48px;">
+                                    {!! $svgIcon('lightbulb') !!}
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-black text-lg">💡 Comment ça marche ?</h3>
+                                    <p class="text-sm" style="color: var(--admin-muted);">
+                                        L'attribution est <strong>automatique</strong>. Cliquez sur <strong>"Attribuer"</strong> pour lancer la recherche du meilleur prestataire disponible.
+                                        Le prestataire a <strong>{{ config('artilo.delai_acceptation_minutes', 20) }} minutes</strong> pour accepter la mission.
                                     </p>
                                 </div>
-                                <a href="{{ route('admin.attributions.index') }}" class="admin-action">
+                                <a href="{{ route('admin.attributions.index') }}" class="admin-action" style="flex-shrink: 0;">
                                     📋 Voir toutes les attributions
                                 </a>
                             </div>
                         </div>
                     </section>
 
-                    {{-- CATALOGUE DES MÉTIERS (Phase 8) --}}
+                    {{-- CATALOGUE DES MÉTIERS --}}
                     <section x-show="activeTab === 'metiers'" x-cloak class="admin-section space-y-5">
 
                         <div class="admin-card p-5">
@@ -1063,7 +1154,7 @@
                                         </div>
                                         <button type="button" class="admin-action">
                                             {!! $svgIcon('search') !!}
-                                            <span>Nouvelle entree</span>
+                                            <span>Nouvelle entrée</span>
                                         </button>
                                     </div>
 
@@ -1076,8 +1167,8 @@
                                         <table class="admin-table">
                                             <thead>
                                                 <tr>
-                                                    <th>Reference</th>
-                                                    <th>Libelle</th>
+                                                    <th>Référence</th>
+                                                    <th>Libellé</th>
                                                     <th>Statut</th>
                                                     <th>Date</th>
                                                 </tr>
@@ -1087,8 +1178,8 @@
                                                     <td colspan="4">
                                                         <div class="admin-empty">
                                                             {!! $svgIcon('clipboard') !!}
-                                                            <p class="font-black">Module a connecter</p>
-                                                            <p class="text-sm">Les donnees « {{ $label }} » s'afficheront ici une fois le controleur relie.</p>
+                                                            <p class="font-black">Module à connecter</p>
+                                                            <p class="text-sm">Les données « {{ $label }} » s'afficheront ici une fois le contrôleur relié.</p>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1150,7 +1241,7 @@
                         charts.line = new Chart(ctx, {
                             type: 'line',
                             data: {
-                                labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+                                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
                                 datasets: [
                                     { label: 'Missions', data: [12, 19, 15, 27, 24, 33, 41], borderColor: primary, backgroundColor: grad, fill: true, tension: .4, borderWidth: 3, pointRadius: 3, pointBackgroundColor: primary },
                                     { label: 'Demandes', data: [18, 22, 20, 30, 29, 38, 47], borderColor: secondary, backgroundColor: 'transparent', fill: false, tension: .4, borderWidth: 3, pointRadius: 3, pointBackgroundColor: secondary, borderDash: [6, 5] }
@@ -1172,7 +1263,7 @@
                         charts.donut = new Chart(elDo.getContext('2d'), {
                             type: 'doughnut',
                             data: {
-                                labels: ['En attente', 'Affectees', 'En cours', 'Terminees'],
+                                labels: ['En attente', 'Affectées', 'En cours', 'Terminées'],
                                 datasets: [{ data: [8, 12, 15, 34], backgroundColor: [secondary, '#0ea5e9', primary, '#10b981'], borderWidth: 0, hoverOffset: 8 }]
                             },
                             options: {
@@ -1187,7 +1278,7 @@
                         charts.bar = new Chart(elBar.getContext('2d'), {
                             type: 'bar',
                             data: {
-                                labels: ['Plomberie', 'Elec', 'Peinture', 'Maconnerie', 'Menuiserie'],
+                                labels: ['Plomberie', 'Élec', 'Peinture', 'Maçonnerie', 'Menuiserie'],
                                 datasets: [{ label: 'Demandes', data: [24, 31, 18, 14, 9], backgroundColor: primary, borderRadius: 8, maxBarThickness: 34 }]
                             },
                             options: {
