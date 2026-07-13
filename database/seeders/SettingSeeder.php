@@ -24,7 +24,7 @@ class SettingSeeder extends Seeder
             ['key' => 'color_muted',            'value' => '#6B5B95',   'type' => 'color'],
 
             // ── IMAGES (logo, favicon, héros, métiers, carte) ──
-            ['key' => 'logo',                    'value' => 'images/auth/logo.jpeg',            'type' => 'image'],
+            ['key' => 'logo',                    'value' => 'images/logo.jpeg',            'type' => 'image'],
             ['key' => 'favicon',                 'value' => 'images/favicon.png',                'type' => 'image'],
             ['key' => 'hero_image_1',            'value' => 'images/artisan_plombier.png',       'type' => 'image'],
             ['key' => 'hero_image_2',            'value' => 'images/artisan_electricien.png',    'type' => 'image'],
@@ -35,6 +35,15 @@ class SettingSeeder extends Seeder
             ['key' => 'trade_image_electricite', 'value' => 'images/electricité.jfif',           'type' => 'image'],
             ['key' => 'trade_image_maconnerie',  'value' => 'images/maçonnerie.jfif',            'type' => 'image'],
             ['key' => 'trade_image_menuiserie',  'value' => 'images/menuiserie.jfif',            'type' => 'image'],
+
+            // ── NOUVELLES IMAGES (bâtiment, construction, outils, etc.) ──
+            ['key' => 'image_batiment',          'value' => 'images/batiment.jfif',              'type' => 'image'],
+            ['key' => 'image_building',          'value' => 'images/Building.jfif',              'type' => 'image'],
+            ['key' => 'image_construction',      'value' => 'images/construction.jfif',          'type' => 'image'],
+            ['key' => 'image_outils',            'value' => 'images/outils.jfif',                'type' => 'image'],
+            ['key' => 'image_plan',              'value' => 'images/plan.jfif',                  'type' => 'image'],
+            ['key' => 'image_usine',             'value' => 'images/usine.jfif',                 'type' => 'image'],
+            ['key' => 'image_maison',            'value' => 'images/maison.jfif',                'type' => 'image'],
 
             // ── TEXTES généraux ──────────────────────
             ['key' => 'site_name',      'value' => 'Artilo',                     'type' => 'text'],

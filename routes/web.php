@@ -5,25 +5,58 @@
 // ======================================================
 // Contrôleurs et classes utilisés dans les routes ci-dessous
 use App\Http\Controllers\Admin\ArtisanValidationController;
-use App\Http\Controllers\Admin\ProfilArtisanController;  // ⬅️ NOUVEAU : gestion des profils artisans côté admin
-use App\Http\Controllers\Artisan\ProfilController;       // ⬅️ NOUVEAU : édition du profil par l'artisan lui-même
+use App\Http\Controllers\Admin\ProfilArtisanController;
+use App\Http\Controllers\Admin\MetierController;
+use App\Http\Controllers\Artisan\ProfilController;
 use App\Http\Controllers\Auth\RegisterArtisanController;
 use App\Http\Controllers\Auth\RegisterCustomerController;
+use App\Http\Controllers\Particulier\DemandeController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Artisan;
+use App\Models\Mission;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Laravel\Socialite\Facades\Socialite; // Connexion via Google (OAuth)
-
+use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\Admin\AttributionController;
+use App\Http\Controllers\Artisan\MissionController as ArtisanMissionController;
+use Illuminate\Support\Facades\Schedule;
+use App\Console\Commands\ReaffecterMissionsExpirees;
+use App\Http\Controllers\Artisan\DashboardController;
 // ======================================================
 // PAGE D'ACCUEIL
 // ======================================================
 Route::get('/', function () {
     return view('welcome');
+});
+
+// ======================================================
+// ROUTES POUR LES PARTICULIERS (NOUVEAU)
+// ======================================================
+Route::middleware(['auth'])->prefix('particulier')->name('particulier.')->group(function () {
+    
+    // Dashboard particulier (redirige vers MaPage)
+    Route::get('/dashboard', function () {
+        return redirect()->route('MaPage');
+    })->name('dashboard');
+    
+    // Demande de service
+    Route::get('/demande/create', [DemandeController::class, 'create'])
+        ->name('demande.create');
+    Route::post('/demande', [DemandeController::class, 'store'])
+        ->name('demande.store');
+    Route::get('/demande/{mission}', [DemandeController::class, 'suivi'])
+        ->name('mission.suivi');
+    Route::post('/demande/{mission}/annuler', [DemandeController::class, 'annuler'])
+        ->name('mission.annuler');
+
+    // Rafraîchissement du token CSRF (évite l'erreur 419 sur les formulaires longs)
+    Route::get('/csrf-refresh', function () {
+        return response()->json(['token' => csrf_token()]);
+    })->name('csrf-refresh');
 });
 
 // ======================================================
@@ -48,15 +81,12 @@ Route::get('/MaPage', function () {
 })->middleware(['auth', 'verified'])->name('MaPage');
 
 // Tableau de bord spécifique à l'artisan connecté
-Route::get('/artisan/MaPage', function () {
-    // Récupère la fiche "Artisan" liée au compte utilisateur connecté
-    $artisan = Auth::user()->artisan;
-
-    return view('artisans.MaPage', compact('artisan'));
-})->middleware(['auth', 'verified'])->name('artisan.MaPage');
+Route::get('/artisan/MaPage', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('artisan.MaPage');
 
 // ======================================================
-// ROUTES ARTISAN (espace protégé)  ⬅️ NOUVEAU BLOC
+// ROUTES ARTISAN
 // ======================================================
 // Toutes les routes ici sont préfixées par /artisan et nommées artisan.*
 // Réservées aux utilisateurs authentifiés (pas de vérification de rôle ici,
@@ -70,23 +100,14 @@ Route::middleware(['auth'])->prefix('artisan')->name('artisan.')->group(function
 });
 
 // ======================================================
-// GESTION DU PROFIL UTILISATEUR (compte générique Breeze)
+// GESTION DU PROFIL UTILISATEUR (Breeze)
 // ======================================================
 // Ces routes gèrent le profil de base fourni par Laravel Breeze,
 // distinct du "profil artisan" métier géré au-dessus.
 Route::middleware('auth')->group(function () {
-
-    // Afficher le formulaire de profil
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-
-    // Mettre à jour les informations du profil
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-
-    // Supprimer le compte utilisateur
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Charge les routes d'authentification générées par Laravel Breeze
@@ -99,25 +120,17 @@ require __DIR__.'/auth.php';
 // middleware('guest') : accessible uniquement aux visiteurs NON connectés
 Route::middleware('guest')->group(function () {
 
-    // ---------- Inscription d'un particulier (customer) ----------
-
-    // Affiche le formulaire d'inscription avec l'onglet "particulier" actif
     Route::get('/register', function () {
         return view('auth.register', ['activeTab' => 'customer']);
     })->name('register');
 
-    // Traite la soumission du formulaire d'inscription du particulier
     Route::post('/register', [RegisterCustomerController::class, 'store'])
         ->name('register.customer.store');
 
-    // ---------- Inscription d'un artisan ----------
-
-    // Affiche le même formulaire mais avec l'onglet "Artisan" actif
     Route::get('/register/artisan', function () {
         return view('auth.register', ['activeTab' => 'artisan']);
     })->name('register.artisan');
 
-    // Traite la soumission du formulaire d'inscription de l'artisan
     Route::post('/register/artisan', [RegisterArtisanController::class, 'store'])
         ->name('register.artisan.store');
 });
@@ -189,6 +202,25 @@ Route::middleware(['auth', 'admin'])
                 ->take(5)
                 ->get();
 
+            // --- Demandes (missions) en attente d'attribution à un prestataire ---
+            // Colonne réelle : "statut" (enum), valeur "en_attente".
+            // On utilise le scope scopeEnAttente() déjà défini dans le modèle Mission.
+            $demandesEnAttente = Mission::enAttente()
+                ->latest()
+                ->paginate(10);
+
+            // --- Missions affectées à un prestataire, en attente de sa réponse ---
+            // Colonne réelle : "statut" (enum), valeur "affectee".
+            // On utilise le scope scopeAffectees() déjà défini dans le modèle Mission.
+            $missionsAffectees = Mission::affectees()
+                ->latest()
+                ->paginate(10);
+
+            // --- Catalogue des métiers (Phase 8), avec le nombre de prestataires par métier ---
+            $metiers = \App\Models\Metier::withCount('artisans')
+                ->orderBy('nom')
+                ->get();
+
             // Envoie toutes ces variables à la vue admin.MaPage
             return view('admin.MaPage', compact(
                 'pendingCount',
@@ -203,7 +235,10 @@ Route::middleware(['auth', 'admin'])
                 'latestCandidates',
                 'latestArtisans',
                 'professions',
-                'areas'
+                'areas',
+                'demandesEnAttente',
+                'missionsAffectees',
+                'metiers'
             ));
         })->name('MaPage');
 
@@ -225,7 +260,7 @@ Route::middleware(['auth', 'admin'])
                 'profile_photo' => $path,
             ]);
 
-            return back()->with('success', 'Photo de profil mise a jour.');
+            return back()->with('success', 'Photo de profil mise à jour.');
         })->name('profile-photo.update');
 
         // Liste des artisans en attente de validation par l'admin
@@ -244,6 +279,8 @@ Route::middleware(['auth', 'admin'])
         Route::post('/artisans/{artisan}/refuser', [ArtisanValidationController::class, 'refuser'])
             ->name('artisans.refuser');
 
+
+            
         // ======================================================
         // GESTION DES PROFILS DES ARTISANS  ⬅️ NOUVEAU
         // ======================================================
@@ -285,7 +322,7 @@ Route::get('/auth/google/callback', function () {
                 'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
                 'password' => bcrypt(Str::random(16)),
-                'role' => 'customer', // rôle par défaut attribué aux inscriptions Google
+                'role' => 'customer',
             ]);
         }
 
@@ -318,3 +355,44 @@ Route::get('/auth/google/callback', function () {
 Route::get('/artisans', function () {
     return view('artisans.index');
 });
+
+// ============================================================
+// ROUTES ADMIN - ATTRIBUTIONS
+// ============================================================
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/attributions', [AttributionController::class, 'index'])->name('attributions.index');
+    Route::get('/attributions/{mission}', [AttributionController::class, 'show'])->name('attributions.show');
+    Route::post('/attributions/{mission}/attribuer', [AttributionController::class, 'attribuer'])->name('attributions.attribuer');
+    Route::post('/attributions/{mission}/annuler', [AttributionController::class, 'annuler'])->name('attributions.annuler');
+    Route::post('/attributions/{mission}/forcer', [AttributionController::class, 'forcerAttribution'])->name('attributions.forcer');
+});
+
+// ============================================================
+// ROUTES ADMIN - CATALOGUE DES MÉTIERS (Phase 8)
+// ============================================================
+// NB : pas de ->name('admin.') sur ce groupe, car ->names('admin.metiers')
+// ci-dessous gère déjà le préfixe de nommage. Cumuler les deux créerait
+// des noms de route dupliqués (admin.admin.metiers.*).
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::resource('metiers', MetierController::class)
+        ->except(['show'])
+        ->names('admin.metiers');
+});
+
+// ============================================================
+// ROUTES PRESTATAIRE - MISSIONS
+// ============================================================
+Route::middleware(['auth', 'artisan'])->prefix('artisan')->name('artisan.')->group(function () {
+    Route::get('/missions', [ArtisanMissionController::class, 'index'])->name('missions.index');
+    Route::get('/missions/{mission}', [ArtisanMissionController::class, 'show'])->name('missions.show');
+    Route::post('/missions/{mission}/accepter', [ArtisanMissionController::class, 'accepter'])->name('missions.accepter');
+    Route::post('/missions/{mission}/refuser', [ArtisanMissionController::class, 'refuser'])->name('missions.refuser');
+});
+// Réaffectation automatique des missions expirées (toutes les minutes)
+Schedule::command('artilo:reaffecter-missions')->everyMinute();
+
+// Validation automatique des missions (Phase 18 - tous les jours à minuit)
+Schedule::command('artilo:valider-missions-auto')->daily();
+
+// Backup automatique (Phase 30 - tous les jours à 3h du matin)
+Schedule::command('backup:run')->dailyAt('03:00');
