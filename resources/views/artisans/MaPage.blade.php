@@ -837,9 +837,15 @@ $factoryImage = asset('images/usine.jfif');
                                     </div>
                                 </div>
                                 <div class="acts">
-                                    @if ($m['state'] === 'new')
-                                        <button class="m-btn accept"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Accepter</button>
-                                        <button class="m-btn refuse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>Refuser</button>
+                                    @if ($m['statut'] === 'affectee')
+                                        <form action="{{ route('artisan.missions.accepter', $m['mission']) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="m-btn accept"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Accepter</button>
+                                        </form>
+                                        <form action="{{ route('artisan.missions.refuser', $m['mission']) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="m-btn refuse" onclick="return confirm('Refuser cette mission ? Un autre prestataire sera recherché.')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>Refuser</button>
+                                        </form>
                                     @endif
                                     <button class="m-btn diag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a3 3 0 1 0 6 0 3 3 0 0 0-6 0z"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Diagnostic</button>
                                     <button class="m-btn devis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Devis</button>
