@@ -99,13 +99,33 @@ $stats = [
 ];
 
 /* ─────────────────────────────────────────────────────────────
- |  DONNÉES DE DÉMO (à remplacer par Mission / Reversement)
+ |  MISSIONS RÉELLES (depuis le contrôleur DashboardController)
  ───────────────────────────────────────────────────────────── */
-$missions = [
-    ['id' => 'ART-2401', 'client' => 'Kodjo A.', 'type' => 'Plomberie',   'zone' => 'Lomé — Adidogomé', 'date' => "Aujourd'hui · 14h", 'budget' => '75 000 F',  'state' => 'new',      'urgent' => true],
-    ['id' => 'ART-2398', 'client' => 'Ama D.',   'type' => 'Électricité', 'zone' => 'Lomé — Bè',        'date' => 'Demain · 09h',      'budget' => '120 000 F', 'state' => 'accepted', 'urgent' => false],
-    ['id' => 'ART-2390', 'client' => 'Yao K.',   'type' => 'Maçonnerie',  'zone' => 'Lomé — Agoè',      'date' => '15 Juil · 10h',     'budget' => '340 000 F', 'state' => 'progress', 'urgent' => false],
-];
+$allMissionsList = collect();
+$missionsEnAttente->each(fn($m) => $m->state = 'new');
+$missionsAcceptees->each(fn($m) => $m->state = 'progress');
+$allMissionsList = $missionsEnAttente->concat($missionsAcceptees);
+
+function formatMissionDate($date) {
+    if (!$date) return '—';
+    $n = \Carbon\Carbon::parse($date);
+    if ($n->isToday()) return "Aujourd'hui · " . $n->format('H:i');
+    if ($n->isTomorrow()) return 'Demain · ' . $n->format('H:i');
+    return $n->format('d M Y · H:i');
+}
+
+$missions = $allMissionsList->map(fn($m) => [
+    'id' => '#' . $m->id,
+    'client' => $m->particulier->name ?? 'Client',
+    'type' => $m->metier_requis ?? ($m->metier->nom ?? 'Service'),
+    'zone' => $m->adresse ?? 'Adresse non renseignée',
+    'date' => formatMissionDate($m->created_at),
+    'budget' => $m->budget_previsionnel ? number_format($m->budget_previsionnel, 0, ',', ' ') . ' F' : '—',
+    'state' => $m->state,
+    'urgent' => ($m->expire_le && now()->diffInMinutes($m->expire_le, false) < 10 && $m->statut === 'affectee'),
+    'statut' => $m->statut,
+    'mission' => $m,
+])->values()->toArray();
 $history = [
     ['id' => 'ART-2201', 'type' => 'Menuiserie',  'client' => 'Sena T.',  'date' => '02 Juil 2026', 'amount' => '210 000 F', 'note' => 5],
     ['id' => 'ART-2188', 'type' => 'Plomberie',   'client' => 'Koffi M.', 'date' => '28 Juin 2026', 'amount' => '85 000 F',  'note' => 4],
